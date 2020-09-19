@@ -7,11 +7,15 @@ def parse_arguments():
     parser.add_argument('--mode', type=str, action='store', help='Whether to create dataset or train model.', default='create', choices=['create', 'train'])
 
     parser.add_argument(
-        '--image_size', type=int, action='store', help='Size of the image dataset.', default=256
+        '--image_size', type=int, action='store', help='Size of the image.', default=256
     )
 
     parser.add_argument(
         '--limit', type=int, action='store', help='Number of images to click per class.', default=100
+    )
+
+    parser.add_argument(
+        '--input_dir', type=str, action='store', help='Location of the input dataset.', default='./dataset'
     )
 
     parser.add_argument(

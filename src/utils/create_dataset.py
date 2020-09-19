@@ -43,9 +43,13 @@ def create_dataset(LIMIT, IMAGE_SIZE, DATASET_PATH):
 
         ret, frame = cap.read()
 
+        frame = cv2.flip(frame, 1)
+
+        display = frame.copy()
         frame = cv2.resize(frame, (IMAGE_SIZE, IMAGE_SIZE))
 
-        cv2.imshow("Main Window", frame)
+        cv2.imshow("Main Window", display)
+        cv2.imshow("Virtual Window", frame)
 
         # Create new label
         if cv2.waitKey(1) & 0xFF == ord('c'):
