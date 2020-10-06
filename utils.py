@@ -6,10 +6,13 @@ import matplotlib.pyplot as plt
 import wandb
 import os
 
-def authorize_wandb(project, id, config):
-    wandb.init(project=project, id=id, config=config)
+def authorize_wandb(project, name, config):
+    wandb.init(project=project, name=name, config=config)
 
-def plot_output(epoch, output_path, fixed_noise, generator, fixed_labels=None):
+def log_wandb(logs, step):
+    wandb.log(logs, step)
+
+def save_output(epoch, output_path, fixed_noise, generator, fixed_labels=None):
     plt.clf()
     with torch.no_grad():
     

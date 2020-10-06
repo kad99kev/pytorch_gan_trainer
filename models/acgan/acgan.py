@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.optim as optim
 import numpy as np
 
-from pytorch_gan_trainer.utils import authorize_wandb, plot_output
+from pytorch_gan_trainer.utils import authorize_wandb, log_wandb, save_output
 from tqdm.auto import tqdm
 from .models import Generator, Discriminator
 
@@ -29,12 +29,12 @@ class ACGAN:
         self.discriminator.to(device)
     
     
-    def train(self, epochs, dataloader, output_batch=64, output_epochs=1, output_path='./outputs', project=None, id=None, config={}, models_path=None):
+    def train(self, epochs, dataloader, output_batch=64, output_epochs=1, output_path='./outputs', project=None, name=None, config={}, models_path=None):
 
         if output_path == 'wandb':
-            if project is None or id is None:
-                raise Exception('No project name or id specified')
-            authorize_wandb(project, id, config=config)
+            if project is None:
+                raise Exception('No project name specified')
+            authorize_wandb(project, name, config)
         
         g_optimizer = optim.Adam(self.generator.parameters(), lr=self.g_lr, betas=self.g_betas)
         d_optimizer = optim.Adam(self.discriminator.parameters(), lr=self.d_lr, betas=self.d_betas)
@@ -114,13 +114,23 @@ class ACGAN:
                 # Update tqdm
                 pbar.update()
 
+            d_total_loss = torch.mean(torch.FloatTensor(discriminator_total_losses))
+            accuracy = np.mean(accuracy_history)
+            g_total_loss = torch.mean(torch.FloatTensor(generator_total_losses))
             print('Discriminator Total Loss: {:.3f}, Discriminator Accuracy: {:.3f}, Generator Total Loss: {:.3f}'.format(
-                    torch.mean(torch.FloatTensor(discriminator_total_losses)),
-                    np.mean(accuracy_history), 
-                    torch.mean(torch.FloatTensor(generator_total_losses))
+                    d_total_loss,
+                    accuracy, 
+                    g_total_loss
                 ))
 
+            if output_path == 'wandb':
+                log_wandb({
+                    'Discriminator Total Loss': d_total_loss,
+                    'Discriminator Accuracy': accuracy,
+                    'Generator Total Loss': g_total_loss
+                    }, epoch + 1)
+
             if (epoch + 1) % output_epochs == 0:
-                plot_output(epoch + 1, output_path, fixed_noise, self.generator, fixed_labels)
+                save_output(epoch + 1, output_path, fixed_noise, self.generator, fixed_labels)
 
             pbar.refresh()

@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 
-from pytorch_gan_trainer.utils import plot_output
+from pytorch_gan_trainer.utils import authorize_wandb, save_output
 from tqdm.auto import tqdm
 from .models import Generator, Discriminator
 
@@ -28,6 +28,11 @@ class DCGAN:
     
     def train(self, epochs, dataloader, output_batch=64, output_epochs=1, output_path='./outputs', project=None, id=None, config={}, models_path=None):
         
+        if output_path == 'wandb':
+            if project is None:
+                raise Exception('No project name specified')
+            authorize_wandb(project, name, config)
+
         g_optimizer = optim.Adam(self.generator.parameters(), lr=self.g_lr, betas=self.g_betas)
         d_optimizer = optim.Adam(self.discriminator.parameters(), lr=self.d_lr, betas=self.d_betas)
 
@@ -99,12 +104,20 @@ class DCGAN:
                 # Update tqdm
                 pbar.update()
 
+            d_total_loss = torch.mean(torch.FloatTensor(discriminator_total_losses))
+            g_total_loss = torch.mean(torch.FloatTensor(generator_total_losses))
             print('Discriminator Total Loss: {:.3f}, Generator Total Loss: {:.3f}'.format(
-                    torch.mean(torch.FloatTensor(discriminator_total_losses)),
-                    torch.mean(torch.FloatTensor(generator_total_losses))
+                    d_total_loss,
+                    g_total_loss
                 ))
 
+            if output_path == 'wandb':
+                log_wandb({
+                    'Discriminator Total Loss': d_total_loss,
+                    'Generator Total Loss': g_total_loss
+                    }, epoch + 1)
+
             if (epoch + 1) % output_epochs == 0:
-                plot_output(epoch + 1, output_path, fixed_noise, self.generator)
+                save_output(epoch + 1, output_path, fixed_noise, self.generator)
 
             pbar.refresh()
