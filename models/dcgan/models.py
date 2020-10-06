@@ -11,11 +11,12 @@ class Generator(nn.Module):
         feature_size (int): Feature size of the model, defaults to 64. 
     '''
 
-    def __init__(self, target_size, latent_size, feature_size):
+    def __init__(self, target_size, num_channels, latent_size, feature_size):
         super(Generator, self).__init__()
 
         assert target_size in [64, 128, 256], 'Target size can only be one of the following: [64, 128, 256]'
-
+        assert num_channels in [1, 3], 'Number of channels can only be one of the following: [1, 3]'
+        
         self.target_size = target_size
         self.feature_size = feature_size
 
@@ -69,7 +70,7 @@ class Generator(nn.Module):
                 feature_size = feature_size // 2
 
         self.output_layer = nn.Sequential(
-            nn.ConvTranspose2d(feature_size, 3, 4, 2, 1, bias=False),
+            nn.ConvTranspose2d(feature_size, num_channels, 4, 2, 1, bias=False),
             nn.Tanh()
         )
         # Shape [target_size x target_size]
@@ -95,17 +96,19 @@ class Discriminator(nn.Module):
         num_classes (int): Number of classes in dataset.
         feature_size (int): Feature size of the model, defaults to 64. 
     '''
-    def __init__(self, target_size, feature_size=64):
+    def __init__(self, target_size, num_channels, feature_size=64):
         super(Discriminator, self).__init__()
         self.target_size = target_size
         self.feature_size = feature_size
 
+        assert target_size in [64, 128, 256], 'Target size can only be one of the following: [64, 128, 256]'
+        assert num_channels in [1, 3], 'Number of channels can only be one of the following: [1, 3]'
         assert feature_size // 8 > 0, 'Please enter a larger feature size'
 
         feature_size = feature_size // 2
 
         self.conv_1 = nn.Sequential(
-            nn.Conv2d(3, feature_size, 4, 2, 1),
+            nn.Conv2d(num_channels, feature_size, 4, 2, 1),
             nn.LeakyReLU(0.2, inplace = True),
             nn.Dropout(0.2)
         )

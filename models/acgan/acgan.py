@@ -3,20 +3,20 @@ import torch.nn as nn
 import torch.optim as optim
 import numpy as np
 
-from pytorch_gan_trainer.utils import authorize_wandb, log_wandb, save_output
+from ..utils import authorize_wandb, log_wandb, save_output
 from tqdm.auto import tqdm
 from .models import Generator, Discriminator
 
 class ACGAN:
-    def __init__(self, target_size, num_classes, latent_size=100, 
+    def __init__(self, target_size, num_channels, num_classes, latent_size=100, 
         generator_feature_size=64, discriminator_feature_size=64,
         g_lr=0.0002, g_betas=(0.5, 0.999), d_lr=0.0002, d_betas=(0.5, 0.999)
     ):
         
         self.latent_size = latent_size
         self.num_classes = num_classes
-        self.generator = Generator(target_size, num_classes, latent_size, generator_feature_size)
-        self.discriminator = Discriminator(target_size, num_classes, discriminator_feature_size)
+        self.generator = Generator(target_size, num_channels, num_classes, latent_size, generator_feature_size)
+        self.discriminator = Discriminator(target_size, num_channels, num_classes, discriminator_feature_size)
 
         self.g_lr = g_lr
         self.g_betas = g_betas

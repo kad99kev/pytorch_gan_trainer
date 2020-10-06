@@ -2,19 +2,19 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 
-from pytorch_gan_trainer.utils import authorize_wandb, save_output
+from ..utils import authorize_wandb, save_output
 from tqdm.auto import tqdm
 from .models import Generator, Discriminator
 
 class DCGAN:
-    def __init__(self, target_size, latent_size=100, 
+    def __init__(self, target_size, num_channels, latent_size=100, 
         generator_feature_size=64, discriminator_feature_size=64,
         g_lr=0.0002, g_betas=(0.5, 0.999), d_lr=0.0002, d_betas=(0.5, 0.999)
     ):
         
         self.latent_size = latent_size
-        self.generator = Generator(target_size, latent_size, generator_feature_size)
-        self.discriminator = Discriminator(target_size, discriminator_feature_size)
+        self.generator = Generator(target_size, num_channels, latent_size, generator_feature_size)
+        self.discriminator = Discriminator(target_size, num_channels, discriminator_feature_size)
 
         self.g_lr = g_lr
         self.g_betas = g_betas
