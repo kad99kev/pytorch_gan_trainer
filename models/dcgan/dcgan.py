@@ -1,10 +1,11 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
-
-from ..utils import authorize_wandb, save_output
 from tqdm.auto import tqdm
-from .models import Generator, Discriminator
+
+from ..utils import authorize_wandb, log_wandb, save_output
+from .generator import Generator
+from .discriminator import Discriminator
 
 class DCGAN:
     def __init__(self, target_size, num_channels, latent_size=100, 

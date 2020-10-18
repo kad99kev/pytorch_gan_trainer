@@ -2,10 +2,11 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import numpy as np
+from tqdm.auto import tqdm
 
 from ..utils import authorize_wandb, log_wandb, save_output
-from tqdm.auto import tqdm
-from .models import Generator, Discriminator
+from .generator import Generator
+from .discriminator import Discriminator
 
 class ACGAN:
     def __init__(self, target_size, num_channels, num_classes, latent_size=100, 
