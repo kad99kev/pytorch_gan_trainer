@@ -31,11 +31,12 @@ class ACGAN:
         
     def generate(self, labels, inputs=None, output_type='tensor'):
         if inputs is None:
-            inputs = torch.randn(size=(current_batch_size, labels.size(0))).to(self.device)
+            inputs = torch.randn(size=(labels.size(0), self.latent_size)).to(self.device)
         
         self.generator.eval()
         with torch.no_grad():
             outputs = self.generator(inputs, labels)
+        self.generator.train()
             
         if output_type == 'tensor':
             return outputs

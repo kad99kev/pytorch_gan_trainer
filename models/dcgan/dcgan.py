@@ -27,12 +27,14 @@ class DCGAN:
         self.generator.to(device)
         self.discriminator.to(device)
         
-    def generate(self, inputs=None, output_type='tensor'):
+    def generate(self, batch_size, inputs=None, output_type='tensor'):
         if inputs is None:
-            inputs = torch.randn(size=(current_batch_size, self.latent_size)).to(self.device)
+            inputs = torch.randn(size=(batch_size, self.latent_size)).to(self.device)
+        
         self.generator.eval()
         with torch.no_grad():
             outputs = self.generator(inputs)
+        self.generator.train()
             
         if output_type == 'tensor':
             return outputs
