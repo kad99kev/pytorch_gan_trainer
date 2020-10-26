@@ -134,6 +134,6 @@ class DCGAN:
 
             if (epoch + 1) % output_epochs == 0:
                 save_output(epoch + 1, output_path, fixed_noise, self.generator)
-                if models_path: save_checkpoint(epoch, models_path, generator, discriminator, g_optimizer, d_optimizer)
+                if models_path: save_checkpoint(epoch, models_path, self.generator, self.discriminator, g_optimizer, d_optimizer)
 
             pbar.refresh()

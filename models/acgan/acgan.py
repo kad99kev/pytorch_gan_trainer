@@ -31,7 +31,8 @@ class ACGAN:
         
     def generate(self, labels, inputs=None, output_type='tensor'):
         if inputs is None:
-            inputs = torch.randn(size=(current_batch_size, self.latent_size)).to(self.device)
+            inputs = torch.randn(size=(current_batch_size, labels.size(0))).to(self.device)
+        
         self.generator.eval()
         with torch.no_grad():
             outputs = self.generator(inputs, labels)
@@ -146,6 +147,6 @@ class ACGAN:
 
             if (epoch + 1) % output_epochs == 0:
                 save_output(epoch + 1, output_path, fixed_noise, self.generator, fixed_labels)
-                if models_path: save_checkpoint(epoch, models_path, generator, discriminator, g_optimizer, d_optimizer)
+                if models_path: save_checkpoint(epoch, models_path, self.generator, self.discriminator, g_optimizer, d_optimizer)
 
             pbar.refresh()
