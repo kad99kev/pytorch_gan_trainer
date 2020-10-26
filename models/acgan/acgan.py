@@ -4,7 +4,7 @@ import torch.optim as optim
 import numpy as np
 from tqdm.auto import tqdm
 
-from ..utils import authorize_wandb, log_wandb, save_output
+from ..utils import authorize_wandb, log_wandb, save_output, save_checkpoint
 from .generator import Generator
 from .discriminator import Discriminator
 
@@ -28,7 +28,20 @@ class ACGAN:
         self.device = device
         self.generator.to(device)
         self.discriminator.to(device)
-    
+        
+    def generate(self, labels, inputs=None, output_type='tensor'):
+        if inputs is None:
+            inputs = torch.randn(size=(current_batch_size, self.latent_size)).to(self.device)
+        self.generator.eval()
+        with torch.no_grad():
+            outputs = self.generator(inputs, labels)
+            
+        if output_type == 'tensor':
+            return outputs
+        if output_type == 'image':
+            return torchvision.utils.make_grid(outputs.cpu(), normalize=True)
+        
+        raise Exception('Invalid return type specified')
     
     def train(self, epochs, dataloader, output_batch=64, output_epochs=1, output_path='./outputs', project=None, name=None, config={}, models_path=None):
 
@@ -133,5 +146,6 @@ class ACGAN:
 
             if (epoch + 1) % output_epochs == 0:
                 save_output(epoch + 1, output_path, fixed_noise, self.generator, fixed_labels)
+                if models_path: save_checkpoint(epoch, models_path, generator, discriminator, g_optimizer, d_optimizer)
 
             pbar.refresh()
