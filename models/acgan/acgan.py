@@ -61,7 +61,7 @@ class ACGAN:
     }, models_path)
         
     def load_checkpoint(self, models_path):
-        state = torch.load(models_path)
+        state = torch.load(models_path, map_location=self.device)
         
         self.generator.load_state_dict(state['generator'])
         self.discriminator.load_state_dict(state['discriminator'])
