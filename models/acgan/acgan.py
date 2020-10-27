@@ -68,7 +68,7 @@ class ACGAN:
         self.g_optim.load_state_dict(state['g_optim'])
         self.d_optim.load_state_dict(state['d_optim'])
         
-        return state['epoch']
+        return state['epoch'] + 1
 
     
     def train(self, epochs, dataloader, epoch_start=0, output_batch=64, output_epochs=1, output_path='./outputs', project=None, name=None, config={}, models_path=None):
