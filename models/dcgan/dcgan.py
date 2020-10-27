@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
+import torchvision
 from tqdm.auto import tqdm
 
 from ..utils import authorize_wandb, log_wandb, save_output
