@@ -1,29 +1,37 @@
 import torch
 import torch.nn as nn
 
+
 class Generator(nn.Module):
-    '''
+    """
     Generator model for DCGAN.
 
     Attributes:
         target_size (int): Target size of output image.
         latent_size (int): Size of input noise, defaults to 100.
-        feature_size (int): Feature size of the model, defaults to 64. 
-    '''
+        feature_size (int): Feature size of the model, defaults to 64.
+    """
 
     def __init__(self, target_size, num_channels, latent_size, feature_size):
         super(Generator, self).__init__()
 
-        assert target_size in [64, 128, 256], 'Target size can only be one of the following: [64, 128, 256]'
-        assert num_channels in [1, 3], 'Number of channels can only be one of the following: [1, 3]'
-        
+        assert target_size in [
+            64,
+            128,
+            256,
+        ], "Target size can only be one of the following: [64, 128, 256]"
+        assert num_channels in [
+            1,
+            3,
+        ], "Number of channels can only be one of the following: [1, 3]"
+
         self.target_size = target_size
         self.feature_size = feature_size
 
         self.input_layer = nn.Sequential(
             nn.ConvTranspose2d(latent_size, feature_size * 2, 4, 1, 0, bias=False),
             nn.BatchNorm2d(feature_size * 2),
-            nn.ReLU(True)
+            nn.ReLU(True),
         )
         # Shape [4 x 4]
 
@@ -31,7 +39,7 @@ class Generator(nn.Module):
         self.conv_trans_1 = nn.Sequential(
             nn.ConvTranspose2d(feature_size * 2, feature_size, 4, 2, 1, bias=False),
             nn.BatchNorm2d(feature_size),
-            nn.ReLU(True)
+            nn.ReLU(True),
         )
         # Shape [8 x 8]
 
@@ -43,7 +51,9 @@ class Generator(nn.Module):
         # Shape [16 x 16]
 
         self.conv_trans_3 = nn.Sequential(
-            nn.ConvTranspose2d(feature_size // 2, feature_size // 2, 4, 2, 1, bias=False),
+            nn.ConvTranspose2d(
+                feature_size // 2, feature_size // 2, 4, 2, 1, bias=False
+            ),
             nn.BatchNorm2d(feature_size // 2),
             nn.ReLU(True),
         )
@@ -53,7 +63,9 @@ class Generator(nn.Module):
         # To adapt for higher image sizes
         if target_size >= 128:
             self.conv_trans_4 = nn.Sequential(
-                nn.ConvTranspose2d(feature_size, feature_size // 2, 4, 2, 1, bias=False),
+                nn.ConvTranspose2d(
+                    feature_size, feature_size // 2, 4, 2, 1, bias=False
+                ),
                 nn.BatchNorm2d(feature_size // 2),
                 nn.ReLU(True),
             )
@@ -62,7 +74,9 @@ class Generator(nn.Module):
 
             if target_size == 256:
                 self.conv_trans_5 = nn.Sequential(
-                    nn.ConvTranspose2d(feature_size, feature_size // 2, 4, 2, 1, bias=False),
+                    nn.ConvTranspose2d(
+                        feature_size, feature_size // 2, 4, 2, 1, bias=False
+                    ),
                     nn.BatchNorm2d(feature_size // 2),
                     nn.ReLU(True),
                 )
@@ -71,7 +85,7 @@ class Generator(nn.Module):
 
         self.output_layer = nn.Sequential(
             nn.ConvTranspose2d(feature_size, num_channels, 4, 2, 1, bias=False),
-            nn.Tanh()
+            nn.Tanh(),
         )
         # Shape [target_size x target_size]
 
