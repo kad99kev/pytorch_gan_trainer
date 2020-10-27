@@ -88,8 +88,9 @@ class ACGAN:
         # Set tdqm for epoch progress
         pbar = tqdm()
 
-        for epoch in range(epoch_start, epochs + epoch_start):
-            print(f'Epoch: {epoch + 1} / {epochs}')
+        epoch_end = epochs + epoch_start
+        for epoch in range(epoch_start, epoch_end):
+            print(f'Epoch: {epoch + 1} / {epoch_end}')
             pbar.reset(total=len(dataloader))
 
             # Setting up losses
