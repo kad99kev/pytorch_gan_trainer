@@ -33,12 +33,3 @@ def save_output(epoch, output_path, fixed_noise, generator, fixed_labels=None):
         if not os.path.exists(output_path):
             os.mkdir(output_path)
         image.save(f'./{output_path}/epoch_{epoch}.jpeg')
-        
-def save_checkpoint(epoch, model_path, generator, discriminator, g_optim, d_optim):
-    torch.save({
-        'epoch': epoch,
-        'generator': generator,
-        'discriminator': discriminator,
-        'g_optim': g_optim,
-        'd_optim': d_optim
-    }, model_path)

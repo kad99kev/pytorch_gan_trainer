@@ -4,7 +4,7 @@ import torch.optim as optim
 import numpy as np
 from tqdm.auto import tqdm
 
-from ..utils import authorize_wandb, log_wandb, save_output, save_checkpoint
+from ..utils import authorize_wandb, log_wandb, save_output
 from .generator import Generator
 from .discriminator import Discriminator
 
@@ -23,6 +23,12 @@ class ACGAN:
         self.g_betas = g_betas
         self.d_lr = d_lr
         self.d_betas = d_betas
+        
+        self.g_optim = optim.Adam(self.generator.parameters(), lr=self.g_lr, betas=self.g_betas)
+        self.d_optim = optim.Adam(self.discriminator.parameters(), lr=self.d_lr, betas=self.d_betas)
+        
+        self.device = torch.device('cpu')
+        
 
     def set_device(self, device):
         self.device = device
@@ -45,15 +51,32 @@ class ACGAN:
         
         raise Exception('Invalid return type specified')
     
-    def train(self, epochs, dataloader, output_batch=64, output_epochs=1, output_path='./outputs', project=None, name=None, config={}, models_path=None):
+    def save_checkpoint(self, epoch, models_path):
+        torch.save({
+        'epoch': epoch,
+        'generator': self.generator.state_dict(),
+        'discriminator': self.discriminator.state_dict(),
+        'g_optim': self.g_optim.state_dict(),
+        'd_optim': self.d_optim.state_dict()
+    }, models_path)
+        
+    def load_checkpoint(self, models_path):
+        state = torch.load(models_path)
+        
+        self.generator.load_state_dict(state['generator'])
+        self.discriminator.load_state_dict(state['discriminator'])
+        self.g_optim.load_state_dict(state['g_optim'])
+        self.d_optim.load_state_dict(state['d_optim'])
+        
+        return state['epoch']
+
+    
+    def train(self, epochs, dataloader, epoch_start=0, output_batch=64, output_epochs=1, output_path='./outputs', project=None, name=None, config={}, models_path=None):
 
         if output_path == 'wandb':
             if project is None:
                 raise Exception('No project name specified')
             authorize_wandb(project, name, config)
-        
-        g_optimizer = optim.Adam(self.generator.parameters(), lr=self.g_lr, betas=self.g_betas)
-        d_optimizer = optim.Adam(self.discriminator.parameters(), lr=self.d_lr, betas=self.d_betas)
 
         adversarial_loss = nn.BCELoss().to(self.device)
         auxillary_loss = nn.CrossEntropyLoss().to(self.device)
@@ -65,7 +88,7 @@ class ACGAN:
         # Set tdqm for epoch progress
         pbar = tqdm()
 
-        for epoch in range(epochs):
+        for epoch in range(epoch_start, epochs + epoch_start):
             print(f'Epoch: {epoch + 1} / {epochs}')
             pbar.reset(total=len(dataloader))
 
@@ -101,7 +124,7 @@ class ACGAN:
                 
                 generator_total_loss = (adversarial_loss(discriminator_fake_validity, real_validity) + auxillary_loss(discriminator_fake_labels, fake_labels)) / 2
                 generator_total_loss.backward()
-                g_optimizer.step()
+                self.g_optim.step()
                 generator_total_losses.append(generator_total_loss)
 
                 # Training Discriminator
@@ -118,7 +141,7 @@ class ACGAN:
                 ## Total loss
                 discriminator_total_loss = discriminator_real_loss + discriminator_fake_loss
                 discriminator_total_loss.backward()
-                d_optimizer.step()
+                self.d_optim.step()
                 discriminator_total_losses.append(discriminator_total_loss)
 
                 # Calculate Discriminator Accuracy
@@ -134,10 +157,10 @@ class ACGAN:
             accuracy = np.mean(accuracy_history)
             g_total_loss = torch.mean(torch.FloatTensor(generator_total_losses))
             print('Discriminator Total Loss: {:.3f}, Discriminator Accuracy: {:.3f}, Generator Total Loss: {:.3f}'.format(
-                    d_total_loss,
-                    accuracy, 
-                    g_total_loss
-                ))
+                d_total_loss,
+                accuracy, 
+                g_total_loss
+            ))
 
             if output_path == 'wandb':
                 log_wandb({
@@ -148,6 +171,6 @@ class ACGAN:
 
             if (epoch + 1) % output_epochs == 0:
                 save_output(epoch + 1, output_path, fixed_noise, self.generator, fixed_labels)
-                if models_path: save_checkpoint(epoch, models_path, self.generator, self.discriminator, g_optimizer, d_optimizer)
+                if models_path: self.save_checkpoint(epoch, models_path)
 
             pbar.refresh()

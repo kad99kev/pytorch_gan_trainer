@@ -21,6 +21,12 @@ class DCGAN:
         self.g_betas = g_betas
         self.d_lr = d_lr
         self.d_betas = d_betas
+        
+        self.g_optim = optim.Adam(self.generator.parameters(), lr=self.g_lr, betas=self.g_betas)
+        self.d_optim = optim.Adam(self.discriminator.parameters(), lr=self.d_lr, betas=self.d_betas)
+        
+        self.device = torch.device('cpu')
+        
 
     def set_device(self, device):
         self.device = device
@@ -43,18 +49,31 @@ class DCGAN:
         
         raise Exception('Invalid return type specified')
     
-    def train(self, epochs, dataloader, output_batch=64, output_epochs=1, output_path='./outputs', project=None, id=None, config={}, models_path=None):
+    def save_checkpoint(self, epoch, model_path):
+        torch.save({
+        'epoch': epoch,
+        'generator': self.generator.state_dict(),
+        'discriminator': self.discriminator.state_dict(),
+        'g_optim': self.g_optim.state_dict(),
+        'd_optim': self.d_optim.state_dict()
+    }, model_path)
+        
+    def load_checkpoint(self, models_path):
+        state = torch.load(models_path)
+        
+        self.generator.load_state_dict(state['generator'])
+        self.discriminator.load_state_dict(state['discriminator'])
+        self.g_optim.load_state_dict(state['g_optim'])
+        self.d_optim.load_state_dict(state['d_optim'])
+        
+        return state['epoch']
+    
+    def train(self, epochs, dataloader, epoch_start=0, output_batch=64, output_epochs=1, output_path='./outputs', project=None, id=None, config={}, models_path=None):
         
         if output_path == 'wandb':
             if project is None:
                 raise Exception('No project name specified')
             authorize_wandb(project, name, config)
-
-        g_optimizer = optim.Adam(self.generator.parameters(), lr=self.g_lr, betas=self.g_betas)
-        d_optimizer = optim.Adam(self.discriminator.parameters(), lr=self.d_lr, betas=self.d_betas)
-
-        if not self.device:
-            self.device = torch.device('cpu')
 
         adversarial_loss = nn.BCELoss().to(self.device)
 
@@ -64,7 +83,7 @@ class DCGAN:
         # Set tdqm for epoch progress
         pbar = tqdm()
 
-        for epoch in range(epochs):
+        for epoch in range(epoch_start, epochs + epoch_start):
             print(f'Epoch: {epoch + 1} / {epochs}')
             pbar.reset(total=len(dataloader))
 
@@ -98,7 +117,7 @@ class DCGAN:
                 
                 generator_total_loss = adversarial_loss(discriminator_fake_labels, real_labels)
                 generator_total_loss.backward()
-                g_optimizer.step()
+                self.g_optim.step()
                 generator_total_losses.append(generator_total_loss)
 
                 # Training Discriminator
@@ -115,7 +134,7 @@ class DCGAN:
                 ## Total loss
                 discriminator_total_loss = discriminator_real_loss + discriminator_fake_loss
                 discriminator_total_loss.backward()
-                d_optimizer.step()
+                self.d_optim.step()
                 discriminator_total_losses.append(discriminator_total_loss)
 
                 # Update tqdm
@@ -136,6 +155,6 @@ class DCGAN:
 
             if (epoch + 1) % output_epochs == 0:
                 save_output(epoch + 1, output_path, fixed_noise, self.generator)
-                if models_path: save_checkpoint(epoch, models_path, self.generator, self.discriminator, g_optimizer, d_optimizer)
+                if models_path: self.save_checkpoint(epoch, models_path)
 
             pbar.refresh()
