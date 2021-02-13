@@ -3,16 +3,19 @@ import torch.nn as nn
 
 
 class Discriminator(nn.Module):
-    """
-    Discriminator model for ACGAN.
-
-    Attributes:
-        target_size (int): Target size of input image.
-        num_classes (int): Number of classes in dataset.
-        feature_size (int): Feature size of the model, defaults to 64.
-    """
+    """Discriminator model for ACGAN."""
 
     def __init__(self, target_size, num_channels, num_classes, feature_size=64):
+        """
+        :param target_size: Target size of input image.
+        :type target_size: int
+        :param num_channels: Number of channels in images of dataset.
+        :type num_channels: int
+        :param num_classes: Number of classes in dataset.
+        :type num_classes: int
+        :param feature_size: Feature size of the model, defaults to 64.
+        :type feature_size: int
+        """
         super(Discriminator, self).__init__()
         self.target_size = target_size
         self.feature_size = feature_size
@@ -92,6 +95,12 @@ class Discriminator(nn.Module):
         )
 
     def forward(self, inputs):
+        """Forward pass to the model.
+
+        :param inputs: Inputs to the model.
+        :type inputs: torch.Tensor
+        :returns: Outputs from the forward pass. (valid, labels)
+        """
         x = self.conv_1(inputs)
         x = self.conv_2(x)
         x = self.conv_3(x)

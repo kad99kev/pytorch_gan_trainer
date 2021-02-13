@@ -3,19 +3,23 @@ import torch.nn as nn
 
 
 class Generator(nn.Module):
-    """
-    Generator model for ACGAN.
-
-    Attributes:
-        target_size (int): Target size of output image.
-        num_classes (int): Number of classes in dataset.
-        latent_size (int): Size of input noise, defaults to 100.
-        feature_size (int): Feature size of the model, defaults to 64.
-    """
+    """Generator model for ACGAN."""
 
     def __init__(
         self, target_size, num_channels, num_classes, latent_size, feature_size
     ):
+        """
+        :param target_size: Target size of input image.
+        :type target_size: int
+        :param num_channels: Number of channels in images of dataset.
+        :type num_channels: int
+        :param num_classes: Number of classes in dataset.
+        :type num_classes: int
+        :param latent_size: Size of input noise, defaults to 100.
+        :param latent_size: int
+        :param feature_size: Feature size of the model, defaults to 64.
+        :type feature_size: int
+        """
         super(Generator, self).__init__()
 
         assert target_size in [
@@ -93,6 +97,14 @@ class Generator(nn.Module):
         # Shape [target_size x target_size]
 
     def forward(self, inputs, labels):
+        """Forward pass to the model.
+
+        :param inputs: Inputs to the model.
+        :type inputs: torch.Tensor
+        :param labels: Labels for conditional generation.
+        :type labels: torch.Tensor
+        :returns: Outputs from the forward pass.
+        """
         x = torch.mul(self.label_embedding(labels), inputs)
         x = self.linear(x)
         x = x.view(x.shape[0], self.feature_size * 2, 4, 4)

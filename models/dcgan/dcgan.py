@@ -10,6 +10,8 @@ from .discriminator import Discriminator
 
 
 class DCGAN:
+    """Deep Convolutional Generative Adveraisal Network."""
+
     def __init__(
         self,
         target_size,
@@ -22,6 +24,27 @@ class DCGAN:
         d_lr=0.0002,
         d_betas=(0.5, 0.999),
     ):
+        """Initialization function for DCGAN.
+
+        :param target_size: Target size for the image to be generated.
+        :type target_size: int
+        :param num_channels: Number of channels in the dataset image.
+        :type num_channels: int
+        :param latent_size: Size of the noise. Default: 100.
+        :type latent_size: int
+        :param generator_feature_size: Number of features for the Generator.
+        :type generator_feature_size: int
+        :param discriminator_feature_size: Number of features for the Discriminator.
+        :type discriminator_feature_size: int
+        :param g_lr: Learning rate for the Generator.
+        :type g_lr: float
+        :param g_betas: Co-efficients for the Generator.
+        :type g_betas: tuple
+        :param d_lr: Learning rate for the Discriminator.
+        :type d_lr: float
+        :param d_betas: Co-efficients for the Discriminator.
+        :type d_betas: float
+        """
 
         self.latent_size = latent_size
         self.generator = Generator(
@@ -46,11 +69,26 @@ class DCGAN:
         self.device = torch.device("cpu")
 
     def set_device(self, device):
+        """Changes the device on which the models reside.
+
+        :param device: Device to which the models should switch.
+        :type device: torch.device
+        """
         self.device = device
         self.generator.to(device)
         self.discriminator.to(device)
 
     def generate(self, batch_size, inputs=None, output_type="tensor"):
+        """Generate images for given labels and inputs.
+
+        :param batch_size: Batch size of outputs.
+        :type batch_size: int
+        :param inputs: Either give a predefined set of inputs or generate randomly.
+        :type inputs: None or torch.Tensor
+        :param output_type: Whether to return a tensor of outputs or a reshaped grid.
+        :type output_type: str
+        :returns: torch.Tensor
+        """
         if inputs is None:
             inputs = torch.randn(size=(batch_size, self.latent_size)).to(self.device)
 
@@ -66,7 +104,14 @@ class DCGAN:
 
         raise Exception("Invalid return type specified")
 
-    def save_checkpoint(self, epoch, model_path):
+    def save_checkpoint(self, epoch, models_path):
+        """Creates a checkpoint of the models and optimizers.
+
+        :param epoch: Current epoch.
+        :type epoch: int
+        :param models_path: Path to save current state.
+        :type models_path: str
+        """
         torch.save(
             {
                 "epoch": epoch,
@@ -75,10 +120,15 @@ class DCGAN:
                 "g_optim": self.g_optim.state_dict(),
                 "d_optim": self.d_optim.state_dict(),
             },
-            model_path,
+            models_path,
         )
 
     def load_checkpoint(self, models_path):
+        """Load a previously saved checkpoint.
+        :param models_path: Path to load the previous state.
+        :type models_path: str
+        :returns: Last processed epoch.
+        """
         state = torch.load(models_path, map_location=self.device)
 
         self.generator.load_state_dict(state["generator"])
@@ -97,10 +147,33 @@ class DCGAN:
         output_epochs=1,
         output_path="./outputs",
         project=None,
-        id=None,
+        name=None,
         config={},
         models_path=None,
     ):
+        """Training loop for DCGAN.
+
+        :param epochs: Number of epochs for training.
+        :type epochs: int
+        :param dataloader: PyTorch DataLoader containing the dataset.
+        :type dataloader: DataLoader
+        :param epoch_start: The epoch from which training should start.
+        :type epoch_start: int
+        :param output_batch: The batch size for the outputs.
+        :type output_batch: int
+        :param output_epochs: The frequency for which outputs will be generated (per epoch).
+        :type output_epochs: int
+        :param output_path: The location at which the outputs will be saved. If output_path is wandb, then Weights and Biases will be configured.
+        :type output_path: str
+        :param project: Project name (Weights and Biases only).
+        :type project: str
+        :param name: Experiment name (Weights and Biases only).
+        :type name: str
+        :param config: Dictionary containing the configuration settings.
+        :type config: dict
+        :param models_path: Path at which (if provided) the checkpoints will be saved.
+        :type models_path: str
+        """
 
         if output_path == "wandb":
             if project is None:
