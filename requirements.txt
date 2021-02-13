@@ -1,6 +1,6 @@
-numpy==1.19.5
-tqdm==4.48.0
 wandb==0.10.18
-torchvision==0.7.0
-torch==1.6.0
 matplotlib==3.3.0
+torch==1.7.1
+tqdm==4.48.0
+numpy==1.19.5
+torchvision==0.8.2
