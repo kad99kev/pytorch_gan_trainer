@@ -218,7 +218,6 @@ class DCGAN:
                 ).to(self.device)
 
                 fake_images = self.generator(input_noise)
-                print(f"Fake image shape: {fake_images.shape}")
 
                 ## Calculate Generator loss
                 discriminator_fake_labels = self.discriminator(fake_images)
