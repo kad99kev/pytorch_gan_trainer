@@ -132,6 +132,7 @@ class ACGAN:
 
     def load_checkpoint(self, models_path):
         """Load a previously saved checkpoint.
+
         :param models_path: Path to load the previous state.
         :type models_path: str
         :returns: Last processed epoch.
