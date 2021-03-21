@@ -19,6 +19,7 @@ github:
 	@rm -rf "$(BUILDDIR)"
 	@make html
 	@mv "$(BUILDDIR)/html" "$(DOCS)"
+	@rm -rf "$(DOCS)/docs"
 	@mv "$(DOCS)/html" "$(DOCS)/docs"
 	@touch "$(DOCS)/.nojekyll"
 

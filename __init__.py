@@ -1,1 +1,1 @@
-from . import pytorch_gan_trainer
+from .pytorch_gan_trainer import *
