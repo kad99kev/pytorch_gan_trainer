@@ -132,3 +132,6 @@ dmypy.json
 dataset/*
 !dataset/.gitkeep
 dataset.zip
+
+# Ignore vscode
+.vscode/
