@@ -15,10 +15,10 @@ You can also log your runs with Weight and Biases.
 
 ### How to install?
 
-Clone this repository
+Using pip, run the following command
 
 ```
-git clone https://github.com/kad99kev/pytorch_gan_trainer.git
+pip install git+https://github.com/kad99kev/pytorch_gan_trainer.git
 ```
 
 ### How to use?
