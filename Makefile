@@ -1,8 +1,8 @@
 black:
-	black clumper tests setup.py --check
+	black pytorch_gan_trainer tests setup.py --check
 
 flake:
-	flake8 clumper tests setup.py
+	flake8 pytorch_gan_trainer tests setup.py
 
 test:
 	pytest
