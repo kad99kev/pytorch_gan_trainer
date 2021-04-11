@@ -13,6 +13,12 @@ def load_requirements():
     return requirements
 
 
+test_packages = ["pytest>=6.2.3", "black>=20.8b1", "flake8>=3.9.0"]
+
+util_packages = ["pre-commit>=2.12.0"]
+
+dev_packages = util_packages + test_packages
+
 setup(
     name="pytorch_gan_trainer",
     licence="MIT",
@@ -24,4 +30,5 @@ setup(
         and start training different GAN models.",
     packages=find_packages(),
     install_requires=load_requirements(),
+    extra_require={"dev": dev_packages, "test": test_packages},
 )
