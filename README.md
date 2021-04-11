@@ -12,6 +12,8 @@ You can also log your runs with Weight and Biases.
 -   To create an easy inference to train/save/load different GAN models.
 -   To learn about GANs.
 -   To learn logging with Weights and Biases.
+-   To learn how to create a Python package.
+-   To learn unit testing with PyTest.
 
 ### How to install?
 

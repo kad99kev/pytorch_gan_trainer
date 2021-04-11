@@ -5,7 +5,10 @@ import os
 
 
 def prepare_dataloader(dataset_path, image_size, batch_size):
-    """Prepares a PyTorch DataLoader from a given path with a specific image and batch size. If a specific dataset type is given, the path will not be read and a torchvision dataset will be loaded instead.
+    """Prepares a PyTorch DataLoader from a given path \
+        with a specific image and batch size. \
+        If a specific dataset type is given, \
+            the path will not be read and a torchvision dataset will be loaded instead.
 
     :param dataset_path: The location of the dataset.
     :type dataset_path: str
@@ -13,7 +16,8 @@ def prepare_dataloader(dataset_path, image_size, batch_size):
     :type image_size: int
     :param batch_size: The batch size to be set for the DataLoader.
     :type batch_size: int
-    :returns: A DataLoader with the specified image size and batch size, Length of the number of classes found in the dataset.
+    :returns: A DataLoader with the specified image size and batch size, \
+        Length of the number of classes found in the dataset.
     """
 
     transform = transforms.Compose(
@@ -33,7 +37,7 @@ def prepare_dataloader(dataset_path, image_size, batch_size):
         dataset, batch_size, shuffle=True, pin_memory=True, num_workers=4
     )
 
-    return dataloader, len(dataset.classes)
+    return dataloader, dataset.classes
 
 
 def _check_path(path):
@@ -66,12 +70,12 @@ def _get_torch_dataset(d_type, transform):
             "./dataset", train=True, download=True, transform=transform
         )
 
-    elif dtype == "fashion-mnist":
+    elif d_type == "fashion-mnist":
         dataset = torchvision.datasets.FashionMNIST(
             "./dataset", train=True, download=True, transform=transform
         )
 
     else:
-        raise NotImplementedError
+        raise NotImplementedError()
 
     return dataset

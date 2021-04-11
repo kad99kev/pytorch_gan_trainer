@@ -129,9 +129,12 @@ dmypy.json
 .pyre/
 
 # Ignore dataset folder
-dataset/*
+dataset/
 !dataset/.gitkeep
 dataset.zip
 
 # Ignore vscode
 .vscode/
+
+# Ignore outputs
+test_outputs/
