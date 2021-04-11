@@ -30,5 +30,5 @@ setup(
         and start training different GAN models.",
     packages=find_packages(),
     install_requires=load_requirements(),
-    extra_require={"dev": dev_packages, "test": test_packages},
+    extras_require={"dev": dev_packages, "test": test_packages},
 )
