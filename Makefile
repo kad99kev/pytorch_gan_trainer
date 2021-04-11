@@ -2,7 +2,7 @@ black:
 	black pytorch_gan_trainer tests setup.py --check
 
 flake:
-	flake8 pytorch_gan_trainer tests setup.py
+	flake8 pytorch_gan_trainer tests setup.py --max-line-length 89
 
 test:
 	pytest

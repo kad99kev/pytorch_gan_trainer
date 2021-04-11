@@ -1,7 +1,6 @@
 import torch
 import torchvision
 import torchvision.transforms as transforms
-import numpy as np
 import matplotlib.pyplot as plt
 import wandb
 import os
@@ -36,7 +35,8 @@ def save_output(epoch, output_path, fixed_noise, generator, fixed_labels=None):
 
     :param epoch: Current epoch.
     :type epoch: int
-    :param output_path: Directory to which the image would be saved. If output_path is set to wandb, it will save to your wandb project.
+    :param output_path: Directory to which the image would be saved. \
+        If output_path is set to wandb, it will save to your wandb project.
     :type outpt_path: str
     :param fixed_noise: The fixed noise created before training.
     :type fixed_noise: torch.Tensor

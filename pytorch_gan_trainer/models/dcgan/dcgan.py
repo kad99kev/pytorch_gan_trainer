@@ -161,9 +161,11 @@ class DCGAN:
         :type epoch_start: int
         :param output_batch: The batch size for the outputs.
         :type output_batch: int
-        :param output_epochs: The frequency for which outputs will be generated (per epoch).
+        :param output_epochs: The frequency for which outputs \
+            will be generated (per epoch).
         :type output_epochs: int
-        :param output_path: The location at which the outputs will be saved. If output_path is wandb, then Weights and Biases will be configured.
+        :param output_path: The location at which the outputs will be saved. \
+            If output_path is wandb, then Weights and Biases will be configured.
         :type output_path: str
         :param project: Project name (Weights and Biases only).
         :type project: str
@@ -212,14 +214,14 @@ class DCGAN:
                 # Training Generator
                 self.generator.zero_grad()
 
-                ## Generate fake images
+                # Generate fake images
                 input_noise = torch.randn(
                     size=(current_batch_size, self.latent_size)
                 ).to(self.device)
 
                 fake_images = self.generator(input_noise)
 
-                ## Calculate Generator loss
+                # Calculate Generator loss
                 discriminator_fake_labels = self.discriminator(fake_images)
 
                 generator_total_loss = adversarial_loss(
@@ -232,19 +234,19 @@ class DCGAN:
                 # Training Discriminator
                 self.discriminator.zero_grad()
 
-                ## Loss for real images
+                # Loss for real images
                 discriminator_real_labels = self.discriminator(real_images)
                 discriminator_real_loss = adversarial_loss(
                     discriminator_real_labels, real_labels
                 )
 
-                ## Loss for fake images
+                # Loss for fake images
                 discriminator_fake_labels = self.discriminator(fake_images.detach())
                 discriminator_fake_loss = adversarial_loss(
                     discriminator_fake_labels, fake_labels
                 )
 
-                ## Total loss
+                # Total loss
                 discriminator_total_loss = (
                     discriminator_real_loss + discriminator_fake_loss
                 )
