@@ -28,7 +28,7 @@ pip install git+https://github.com/kad99kev/pytorch_gan_trainer.git
 
 Please check the Colaboratory notebook to see different examples - [Example Notebook](https://colab.research.google.com/drive/1OD4tRnoZogv194X0SJDWt9Onct2nfcPx?usp=sharing)
 
-You can also visit the documented example [here!](example/example.md)
+You can also visit the documented example [here!](https://kad99kev.github.io/pytorch_gan_trainer/example/example.html)
 
 ### Contributing
 
