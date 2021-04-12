@@ -1,13 +1,10 @@
-![Logo](assets/PGT.png)
-
+<img src="img/PGT.png" width=250 height=250 align="right">
 # Welcome to PyTorch GAN Trainer
 
 **Quickly train a GAN to generate images!**
 
 A simple module for you to directly import and start training different GAN models.
 You can also log your runs with Weight and Biases.
-
-![Example](assets/example.png)
 
 ### Aim
 
@@ -42,7 +39,3 @@ Since this project was mainly built as a learning experience, there might be few
 ### License
 
 This project is licensed under the MIT License.
-
-### References
-
-All packaging, testing and documentation referred from the tutorials on [calmcode.io](https://calmcode.io/)

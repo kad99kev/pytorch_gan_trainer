@@ -1,0 +1,40 @@
+site_name: PyTorch GAN Trainer Documentation
+repo_url: https://github.com/kad99kev/pytorch_gan_trainer
+site_url: https://kad99kev.github.io/pytorch_gan_trainer/
+site_description: A simple module for you to directly import and start training different GAN models."
+site_author: Kevlyn Kadamala
+use_directory_urls: false
+nav:
+  - Home: index.md
+  - API:
+      - Models:
+        - ACGAN: api/acgan.md
+        - DCGAN: api/dcgan.md
+      - Datasets: api/datasets.md
+  - Example: example/example.md
+plugins:
+  - mkdocstrings:
+      watch:
+        - pytorch_gan_trainer
+  - search
+copyright: Copyright &copy; 2021 Maintained by <a href="https://twitter.com/kad99kev">Kevlyn</a>.
+theme:
+  name: material
+  icon:
+    logo: material/library
+  font:
+    text: Ubuntu
+    code: Ubuntu Mono
+  favicon: img/favicon.ico
+  logo: img/PGT.png
+  feature:
+    tabs: true
+  palette:
+    primary: red
+    accent: orange
+markdown_extensions:
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - pymdownx.inlinehilite
+  - toc:
+      permalink: true
